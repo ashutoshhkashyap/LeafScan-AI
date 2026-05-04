@@ -1,4 +1,5 @@
 streamlit>=1.32.0
+tensorflow-cpu==2.15.0
 numpy>=1.24.0
 Pillow>=10.0.0
 matplotlib>=3.7.0
@@ -6,4 +7,3 @@ tqdm>=4.65.0
 reportlab>=4.0.0
 extra-streamlit-components==0.1.60
 gdown
-tflite-runtime
