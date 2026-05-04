@@ -24,9 +24,40 @@ import sqlite3
 import hashlib
 import uuid
 import os
-if not os.path.exists("plant_disease_model.keras") and not os.path.exists("plant_disease_model.tflite"):
-    os.system("pip install gdown --break-system-packages -q")
-    os.system("python3 -c \"import gdown; gdown.download('https://drive.google.com/uc?id=1dDnzzDQqiKgY0Mv0W8AO5FSnfxQxZsQg', 'plant_disease_model.tflite', quiet=False)\"")
+import subprocess
+
+def _download_model():
+    tflite_path = "plant_disease_model.tflite"
+    keras_path  = "plant_disease_model.keras"
+
+    # Check if valid file already exists (more than 1MB)
+    for path in [tflite_path, keras_path]:
+        if os.path.exists(path) and os.path.getsize(path) > 1_000_000:
+            return  # already downloaded and valid
+
+    # Install gdown silently
+    subprocess.run(["pip", "install", "gdown", "-q", "--break-system-packages"],
+                   capture_output=True)
+    import gdown
+
+    # Try tflite first (smaller/faster)
+    print("⬇️ Downloading TFLite model...")
+    gdown.download(
+        "https://drive.google.com/uc?id=1dDnzzDQqiKgY0Mv0W8AO5FSnfxQxZsQg",
+        tflite_path, quiet=False
+    )
+
+    # Verify it downloaded properly
+    if not os.path.exists(tflite_path) or os.path.getsize(tflite_path) < 1_000_000:
+        print("⬇️ TFLite failed, trying Keras model...")
+        if os.path.exists(tflite_path):
+            os.remove(tflite_path)
+        gdown.download(
+            "https://drive.google.com/uc?id=1fEnq8VQQRR-RiD4dPq2cFtwYOZH76JX9",
+            keras_path, quiet=False
+        )
+
+_download_model()
 # ── Optional imports (graceful fallback) ──────────────────────────────────────
 try:
     import tensorflow as tf
