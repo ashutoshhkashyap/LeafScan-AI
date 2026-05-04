@@ -23,7 +23,10 @@ import re as _re
 import sqlite3
 import hashlib
 import uuid
-
+import os
+if not os.path.exists("plant_disease_model.keras") and not os.path.exists("plant_disease_model.tflite"):
+    os.system("pip install gdown --break-system-packages -q")
+    os.system("python3 -c \"import gdown; gdown.download('https://drive.google.com/uc?id=1dDnzzDQqiKgY0Mv0W8AO5FSnfxQxZsQg', 'plant_disease_model.tflite', quiet=False)\"")
 # ── Optional imports (graceful fallback) ──────────────────────────────────────
 try:
     import tensorflow as tf
